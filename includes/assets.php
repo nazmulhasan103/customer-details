@@ -22,7 +22,7 @@ class Assets {
 
     public function register_scripts () {
 
-        wp_register_style( 'customer-details-style', Customer_Details_ASSETS . '/css/main.css', false, filemtime( Customer_Details_PATH . '/assets/css/main.css' ), true );
+        wp_register_style( 'customer-details-style', Customer_Details_ASSETS . '/css/main.css', false, filemtime( Customer_Details_PATH . '/assets/css/main.css' ) );
 
         wp_register_script( 'customer-details-script', Customer_Details_ASSETS . '/js/main.js', false, filemtime( Customer_Details_PATH . '/assets/js/main.js' ), true );
 

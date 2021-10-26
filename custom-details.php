@@ -77,7 +77,8 @@ final class Customer_Details {
     public function includes() {
 
         require_once __DIR__ . '/includes/assets.php';
-        require_once __DIR__ . '/includes/admin.php';
+        require_once __DIR__ . '/includes/menu.php';
+        require_once __DIR__ . '/includes/customer-list.php';
         require_once __DIR__ . '/includes/functions.php';
 
     }
@@ -92,7 +93,7 @@ final class Customer_Details {
         
         if ( is_admin() ) {
             new Customer_Details\Assets;
-            new Customer_Details\Admin();
+            new Customer_Details\Menu();
             new Customer_Details\Functions();
         }
     }
