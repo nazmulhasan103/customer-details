@@ -24,7 +24,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  *
  * @since 1.5
  */
-class Customer_Details_Info extends WP_List_Table {
+class Customer_Profiles_Info extends WP_List_Table {
 
 	/**
 	 * Number of items per page
@@ -69,8 +69,8 @@ class Customer_Details_Info extends WP_List_Table {
 
 		// Set parent defaults
 		parent::__construct( array(
-			'singular' => __( 'Customer', 'customer-details' ),
-			'plural'   => __( 'Customers', 'customer-details' ),
+			'singular' => __( 'Customer', 'customer-profiles' ),
+			'plural'   => __( 'Customers', 'customer-profiles' ),
 			'ajax'     => false,
 		) );
 
@@ -125,14 +125,11 @@ class Customer_Details_Info extends WP_List_Table {
 	 * @return string Column Name
 	 */
 	public function column_default( $item, $column_name ) {
+		//var_export($item);
 		switch ( $column_name ) {
-
-			case 'num_purchases' :
-				$value = '<a href="' .
-					admin_url( '/edit.php?post_type=download&page=edd-payment-history&user=' . urlencode( $item['email'] )
-				) . '">' . esc_html( $item['num_purchases'] ) . '</a>';
+			case 'products' :
+				$value = edd_currency_filter( edd_format_amount( $item[ $column_name ] ) );
 				break;
-
 			case 'amount_spent' :
 				$value = edd_currency_filter( edd_format_amount( $item[ $column_name ] ) );
 				break;
@@ -150,18 +147,14 @@ class Customer_Details_Info extends WP_List_Table {
 
 	public function column_name( $item ) {
 		$name        = '#' . $item['id'] . ' ';
-		$name       .= ! empty( $item['name'] ) ? $item['name'] : '<em>' . __( 'Unnamed Customer','customer-details' ) . '</em>';
-		$user        = ! empty( $item['user_id'] ) ? $item['user_id'] : $item['email'];
-		$customer    = new EDD_Customer( $item['id'] );
-		$view_url    = admin_url( 'edit.php?post_type=download&page=edd-customers&view=overview&id=' . $item['id'] );
-		$actions     = array(
-			'view'   => '<a href="' . $view_url . '">' . __( 'View', 'customer-details' ) . '</a>',
-			'delete' => '<a href="' . admin_url( 'edit.php?post_type=download&page=edd-customers&view=delete&id=' . $item['id'] ) . '">' . __( 'Delete', 'customer-details' ) . '</a>'
-		);
+		$name       .= ! empty( $item['name'] ) ? $item['name'] : '<em>' . __( 'Unnamed Customer','customer-profiles' ) . '</em>';
+		$email       = ! empty( $item['email'] ) ? $item['email'] : '';
 
-		$pending  = edd_user_pending_verification( $customer->user_id ) ? ' <em>' . __( '(Pending Verification)', 'customer-details' ) . '</em>' : '';
+		$view_url    = admin_url( '/edit.php?post_type=download&page=edd-payment-history&user=' . urlencode( $email ) );
 
-		return '<a href="' . esc_url( $view_url ) . '">' . $name . '</a>' . $pending . $this->row_actions( $actions );
+		$actions     = [ 'email'   => '<p>' . $email . '</p>' ];
+
+		return '<a href="' . esc_url( $view_url ) . '">' . $name . '</a>' . $this->row_actions( $actions );
 	}
 
 	/**
@@ -172,11 +165,11 @@ class Customer_Details_Info extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'name'          => __( 'Name', 'customer-details' ),
-			'email'         => __( 'Primary Email', 'customer-details' ),
-			'num_purchases' => __( 'Purchases', 'customer-details' ),
-			'amount_spent'  => __( 'Total Spent', 'customer-details' ),
-			'date_created'  => __( 'Date Created', 'customer-details' ),
+			'name'         => __( 'Name', 'customer-profiles' ),
+			'products'     => __( 'Products', 'customer-profiles' ),
+			'state'        => __( 'State', 'customer-profiles' ),
+			'amount_spent' => __( 'Total Spent', 'customer-profiles' ),
+			'date_created' => __( 'Date Created', 'customer-profiles' ),
 		);
 
 		return apply_filters( 'edd_report_customer_columns', $columns );
@@ -193,7 +186,6 @@ class Customer_Details_Info extends WP_List_Table {
 		return array(
 			'date_created'  => array( 'date_created', true ),
 			'name'          => array( 'name', true ),
-			'num_purchases' => array( 'purchase_count', false ),
 			'amount_spent'  => array( 'purchase_value', false ),
 		);
 	}

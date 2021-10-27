@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       Easy Digital Downloads - Customer Details
- * Plugin URI:        https://Customer_Details.com
+ * Plugin Name:       Easy Digital Downloads - Customer Profiles
+ * Plugin URI:        https://Customer_Profiles.com
  * Description:       Handle the basics with this plugin.
  * Version:           1.0
  * Requires at least: 5.2
@@ -11,7 +11,7 @@
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Update URI:        https://example.com/my-plugin/
- * Text Domain:       customer-details
+ * Text Domain:       customer-profiles
  * Domain Path:       /languages
  */
 
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The main plugin class.
  */
-final class Customer_Details {
+final class Customer_Profiles {
 
     const version = '1.0';
 
@@ -39,16 +39,16 @@ final class Customer_Details {
     }
 
     /**
-     * Load Customer-Details textdomain.
+     * Load customer-profiles textdomain.
      */
     public function load_plugin_textdomain() {
-        load_plugin_textdomain( 'customer-details' );
+        load_plugin_textdomain( 'customer-profiles' );
     }
 
     /**
      * Initializes a singleton instance.
      *
-     * @return \Customer_Details classes.
+     * @return \Customer_Profiles classes.
      */
     public static function init() {
         static $instance = false;
@@ -64,11 +64,11 @@ final class Customer_Details {
      * Pre defined constance.
      */
     public function define_constants() {
-        define( 'Customer_Details_VERSION', self::version );
-        define( 'Customer_Details_FILE', __FILE__ );
-        define( 'Customer_Details_PATH', __DIR__ );
-        define( 'Customer_Details_URL', plugins_url( '', Customer_Details_FILE ) );
-        define( 'Customer_Details_ASSETS', Customer_Details_URL . '/assets' );
+        define( 'Customer_Profiles_VERSION', self::version );
+        define( 'Customer_Profiles_FILE', __FILE__ );
+        define( 'Customer_Profiles_PATH', __DIR__ );
+        define( 'Customer_Profiles_URL', plugins_url( '', Customer_Profiles_FILE ) );
+        define( 'Customer_Profiles_ASSETS', Customer_Profiles_URL . '/assets' );
     }
     
     /**
@@ -92,9 +92,9 @@ final class Customer_Details {
     public function init_plugin() {
         
         if ( is_admin() ) {
-            new Customer_Details\Assets;
-            new Customer_Details\Menu();
-            new Customer_Details\Functions();
+            new Customer_Profiles\Assets;
+            new Customer_Profiles\Menu();
+            new Customer_Profiles\Functions();
         }
     }
 
@@ -102,11 +102,11 @@ final class Customer_Details {
 
 /**
  * Initializes the main plugin.
- * @return \Customer_Details
+ * @return \Customer_Profiles
  */
-function Customer_Details() {
-    return Customer_Details::init();
+function Customer_Profiles() {
+    return Customer_Profiles::init();
 }
 
 //Kick off the plugin.
-Customer_Details();
+Customer_Profiles();
