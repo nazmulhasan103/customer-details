@@ -125,13 +125,41 @@ class Customer_Profiles_Info extends WP_List_Table {
 	 * @return string Column Name
 	 */
 	public function column_default( $item, $column_name ) {
+		$customer = new EDD_Customer( $item['id'] );
+		//$logs_table = new EDD_File_Downloads_Log_Table();
+		//$logs_table = new EDD_File_Downloads_Log_Table();
+		$download      = new EDD_Download( 10 );
+
+		//$download = WP_Post::get_instance( $item['id'] );
+
+		$address = get_user_meta( $customer->user_id, '_edd_user_address', true );
+
+		$country = '<span class="country">' . edd_get_country_name( $address['country'] ) . '</span>';
+		$country = ! empty( $country ) ? $country : '';
+
+		$state = '<span class="state">' . edd_get_state_name( $address['country'], $address['state'] ) . '</span>';
+		$state = ! empty( $state ) ? $state : '';
+
+		$city = isset( $address['city'] ) ? $address['city'] : '';
+
 		//var_export($item);
+
 		switch ( $column_name ) {
 			case 'products' :
-				$value = edd_currency_filter( edd_format_amount( $item[ $column_name ] ) );
+				$value = '<a href="' . admin_url( '/edit.php?post_type=download&page=edd-payment-history&user=' . urlencode( $item['email'] )
+				) . '">' . esc_html( $item['num_purchases'] ) . '</a>';
 				break;
+
 			case 'amount_spent' :
 				$value = edd_currency_filter( edd_format_amount( $item[ $column_name ] ) );
+				break;
+
+			case 'country_state' :
+				$value = $country . $state;
+				break;
+
+			case 'city' :
+				$value = esc_html( $city );
 				break;
 
 			case 'date_created' :
@@ -142,10 +170,12 @@ class Customer_Profiles_Info extends WP_List_Table {
 				$value = isset( $item[ $column_name ] ) ? $item[ $column_name ] : null;
 				break;
 		}
+
 		return apply_filters( 'edd_customers_column_' . $column_name, $value, $item['id'] );
 	}
 
 	public function column_name( $item ) {
+		//var_export($item);
 		$name        = '#' . $item['id'] . ' ';
 		$name       .= ! empty( $item['name'] ) ? $item['name'] : '<em>' . __( 'Unnamed Customer','customer-profiles' ) . '</em>';
 		$email       = ! empty( $item['email'] ) ? $item['email'] : '';
@@ -165,15 +195,15 @@ class Customer_Profiles_Info extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'name'         => __( 'Name', 'customer-profiles' ),
-			'products'     => __( 'Products', 'customer-profiles' ),
-			'state'        => __( 'State', 'customer-profiles' ),
-			'amount_spent' => __( 'Total Spent', 'customer-profiles' ),
-			'date_created' => __( 'Date Created', 'customer-profiles' ),
+			'name'          => __( 'Name', 'customer-profiles' ),
+			'products'      => __( 'Products', 'customer-profiles' ),
+			'amount_spent'  => __( 'Total Spend', 'customer-profiles' ),
+			'country_state' => __( 'Country / State', 'customer-profiles' ),
+			'city'          => __( 'City', 'customer-profiles' ),
+			'date_created'  => __( 'Date Created', 'customer-profiles' ),
 		);
 
 		return apply_filters( 'edd_report_customer_columns', $columns );
-
 	}
 
 	/**
