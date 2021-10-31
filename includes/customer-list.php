@@ -125,33 +125,29 @@ class Customer_Profiles_Info extends WP_List_Table {
 	 * @return string Column Name
 	 */
 	public function column_default( $item, $column_name ) {
-		$customer = new EDD_Customer( $item['id'] );
-		//$logs_table = new EDD_File_Downloads_Log_Table();
-		//$logs_table = new EDD_File_Downloads_Log_Table();
-		$download      = new EDD_Download( 10 );
+		$customer  = new EDD_Customer( $item['id'] );
+		$downloads = edd_get_users_purchased_products( $item['email'] );
 
-		//$download = WP_Post::get_instance( $item['id'] );
+		$payment_ids = sprintf( '</br><span class="amount_spent">%s %s</span>', __( 'Payment ID: ', 'customer-profiles' ), $customer->payment_ids );
 
-		$address = get_user_meta( $customer->user_id, '_edd_user_address', true );
+		$products = [];
+		foreach ( $downloads as $download ) {
+			$products[] = '<a href="'. $download->guid .'">' . $download->post_title . '</a>';
+		}
 
-		$country = '<span class="country">' . edd_get_country_name( $address['country'] ) . '</span>';
-		$country = ! empty( $country ) ? $country : '';
+		$address = get_user_meta( $item['id'], '_edd_user_address', true );
 
-		$state = '<span class="state">' . edd_get_state_name( $address['country'], $address['state'] ) . '</span>';
-		$state = ! empty( $state ) ? $state : '';
-
+		$country = isset( $address['country'] ) ? '<span class="country">' . edd_get_country_name( $address['country'] ) . '</span>' : '';
+		$state = isset( $address['state'] ) ? '<span class="state">' . edd_get_state_name( $address['country'], $address['state'] ) . '</span>' : '';
 		$city = isset( $address['city'] ) ? $address['city'] : '';
-
-		//var_export($item);
 
 		switch ( $column_name ) {
 			case 'products' :
-				$value = '<a href="' . admin_url( '/edit.php?post_type=download&page=edd-payment-history&user=' . urlencode( $item['email'] )
-				) . '">' . esc_html( $item['num_purchases'] ) . '</a>';
+				$value = implode( ', ', $products );
 				break;
 
 			case 'amount_spent' :
-				$value = edd_currency_filter( edd_format_amount( $item[ $column_name ] ) );
+				$value = edd_currency_filter( edd_format_amount( $item[ $column_name ] ) ) . $payment_ids;
 				break;
 
 			case 'country_state' :
@@ -175,16 +171,21 @@ class Customer_Profiles_Info extends WP_List_Table {
 	}
 
 	public function column_name( $item ) {
-		//var_export($item);
+		$item_url = admin_url( '/edit.php?post_type=download&page=edd-payment-history&user=' . urlencode( $item['email'] ) );
+
+		$total_items = 1 == $item['num_purchases'] ? $item['num_purchases'] . __(' Item', 'customer-profiles') : $item['num_purchases'] . __(' Items', 'customer-profiles');
+
 		$name        = '#' . $item['id'] . ' ';
-		$name       .= ! empty( $item['name'] ) ? $item['name'] : '<em>' . __( 'Unnamed Customer','customer-profiles' ) . '</em>';
+		$name       .= ! empty( $item['name'] ) ? $item['name'] : '<em>' . __( 'Unnamed Customer', 'customer-profiles' ) . '</em>';
+
 		$email       = ! empty( $item['email'] ) ? $item['email'] : '';
 
 		$view_url    = admin_url( '/edit.php?post_type=download&page=edd-payment-history&user=' . urlencode( $email ) );
 
-		$actions     = [ 'email'   => '<p>' . $email . '</p>' ];
+		$actions     = [ 'date_created'   => '<p>' . sprintf( esc_html__( 'Since %s', 'customer-profiles' ), esc_html( date_i18n( get_option( 'date_format' ), strtotime( $item['date_created'] ) ) )
+		) . '</p>' ];
 
-		return '<a href="' . esc_url( $view_url ) . '">' . $name . '</a>' . $this->row_actions( $actions );
+		return '<a href="' . esc_url( $view_url ) . '">' . $name . '</a> <a href="'. $item_url .'">(' . $total_items . ')</a>' . $this->row_actions( $actions );
 	}
 
 	/**
@@ -196,7 +197,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 	public function get_columns() {
 		$columns = array(
 			'name'          => __( 'Name', 'customer-profiles' ),
-			'products'      => __( 'Products', 'customer-profiles' ),
+			'products'      => __( 'Purchased Downloads', 'customer-profiles' ),
 			'amount_spent'  => __( 'Total Spend', 'customer-profiles' ),
 			'country_state' => __( 'Country / State', 'customer-profiles' ),
 			'city'          => __( 'City', 'customer-profiles' ),
