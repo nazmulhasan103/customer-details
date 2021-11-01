@@ -7,6 +7,10 @@
 
 namespace Customer_Details;
 
+if ( ! defined( 'ABSPATH' ) ) {
+    return;
+}
+
 /**
  * Assets handler class
  */

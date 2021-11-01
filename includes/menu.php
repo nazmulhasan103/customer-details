@@ -1,6 +1,6 @@
 <?php
 /**
- * @author  WpWax
+ * @author  NazmulHasan
  * @since   1.0
  * @version 1.0
  */
@@ -8,6 +8,10 @@
 namespace Customer_Details;
 
 use Customer_Details_Info;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    return;
+}
 
 /**
  * The admin class
