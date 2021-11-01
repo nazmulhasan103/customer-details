@@ -1,16 +1,14 @@
 <?php
 /**
- * Customer Reports Table Class
- *
- * @package     EDD
- * @subpackage  Admin/Reports
- * @copyright   Copyright (c) 2015, Pippin Williamson
- * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
- * @since       1.5
+ * @author  wpWax
+ * @since   1.0
+ * @version 1.0
  */
 
 // Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 // Load WP_List_Table if not loaded
 if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -18,19 +16,15 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 /**
- * EDD_Customer_Reports_Table Class
- *
- * Renders the Customer Reports table
- *
- * @since 1.5
+ * Customer detail class
  */
-class Customer_Profiles_Info extends WP_List_Table {
+class Customer_Details_Info extends WP_List_Table {
 
 	/**
 	 * Number of items per page
 	 *
 	 * @var int
-	 * @since 1.5
+	 * @since 1.0
 	 */
 	public $per_page = 30;
 
@@ -38,7 +32,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 	 * Number of customers found
 	 *
 	 * @var int
-	 * @since 1.7
+	 * @since 1.0
 	 */
 	public $count = 0;
 
@@ -46,7 +40,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 	 * Total customers
 	 *
 	 * @var int
-	 * @since 1.95
+	 * @since 1.0
 	 */
 	public $total = 0;
 
@@ -54,14 +48,14 @@ class Customer_Profiles_Info extends WP_List_Table {
 	 * The arguments for the data set
 	 *
 	 * @var array
-	 * @since  2.6
+	 * @since  1.0
 	 */
 	public $args = array();
 
 	/**
 	 * Get things started
 	 *
-	 * @since 1.5
+	 * @since 1.0
 	 * @see WP_List_Table::__construct()
 	 */
 	public function __construct() {
@@ -69,17 +63,16 @@ class Customer_Profiles_Info extends WP_List_Table {
 
 		// Set parent defaults
 		parent::__construct( array(
-			'singular' => __( 'Customer', 'customer-profiles' ),
-			'plural'   => __( 'Customers', 'customer-profiles' ),
+			'singular' => __( 'Customer', 'customer-details' ),
+			'plural'   => __( 'Customers', 'customer-details' ),
 			'ajax'     => false,
 		) );
-
 	}
 
 	/**
 	 * Show the search field
 	 *
-	 * @since 1.7
+	 * @since 1.0
 	 *
 	 * @param string $text Label for the search box
 	 * @param string $input_id ID of the search box
@@ -105,7 +98,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 	/**
 	 * Gets the name of the primary column.
 	 *
-	 * @since 2.5
+	 * @since 1.0
 	 * @access protected
 	 *
 	 * @return string Name of the primary column.
@@ -117,7 +110,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 	/**
 	 * This function renders most of the columns in the list table.
 	 *
-	 * @since 1.5
+	 * @since 1.0
 	 *
 	 * @param array $item Contains all the data of the customers
 	 * @param string $column_name The name of the column
@@ -128,18 +121,17 @@ class Customer_Profiles_Info extends WP_List_Table {
 		$customer  = new EDD_Customer( $item['id'] );
 		$downloads = edd_get_users_purchased_products( $item['email'] );
 
-		$payment_ids = sprintf( '</br><span class="amount_spent">%s %s</span>', __( 'Payment ID: ', 'customer-profiles' ), $customer->payment_ids );
+		$payment_ids = sprintf( '</br><span class="payment-id">%s %s%s</span>', __( 'ID: ', 'customer-details' ), '#' , str_replace( ',', ', #', $customer->payment_ids ) );
 
 		$products = [];
 		foreach ( $downloads as $download ) {
-			$products[] = '<a href="'. $download->guid .'">' . $download->post_title . '</a>';
+			$products[] = '<a href="'. esc_url( $download->guid ) .'">' . esc_attr( $download->post_title ) . '</a>';
 		}
 
 		$address = get_user_meta( $item['id'], '_edd_user_address', true );
 
 		$country = isset( $address['country'] ) ? '<span class="country">' . edd_get_country_name( $address['country'] ) . '</span>' : '';
 		$state = isset( $address['state'] ) ? '<span class="state">' . edd_get_state_name( $address['country'], $address['state'] ) . '</span>' : '';
-		$city = isset( $address['city'] ) ? $address['city'] : '';
 
 		switch ( $column_name ) {
 			case 'products' :
@@ -152,10 +144,6 @@ class Customer_Profiles_Info extends WP_List_Table {
 
 			case 'country_state' :
 				$value = $country . $state;
-				break;
-
-			case 'city' :
-				$value = esc_html( $city );
 				break;
 
 			case 'date_created' :
@@ -173,35 +161,37 @@ class Customer_Profiles_Info extends WP_List_Table {
 	public function column_name( $item ) {
 		$item_url = admin_url( '/edit.php?post_type=download&page=edd-payment-history&user=' . urlencode( $item['email'] ) );
 
-		$total_items = 1 == $item['num_purchases'] ? $item['num_purchases'] . __(' Item', 'customer-profiles') : $item['num_purchases'] . __(' Items', 'customer-profiles');
+		$total_items = ( 1 == $item['num_purchases'] ) ? $item['num_purchases'] . __(' Item', 'customer-details') : $item['num_purchases'] . __(' Items', 'customer-details');
 
 		$name        = '#' . $item['id'] . ' ';
-		$name       .= ! empty( $item['name'] ) ? $item['name'] : '<em>' . __( 'Unnamed Customer', 'customer-profiles' ) . '</em>';
+		$name       .= ! empty( $item['name'] ) ? $item['name'] : '<em>' . __( 'Unnamed Customer', 'customer-details' ) . '</em>';
 
-		$email       = ! empty( $item['email'] ) ? $item['email'] : '';
+		$view_url    = admin_url( 'edit.php?post_type=download&page=edd-customers&view=overview&id=' . $item['id'] );
 
-		$view_url    = admin_url( '/edit.php?post_type=download&page=edd-payment-history&user=' . urlencode( $email ) );
+		$customer    = new EDD_Customer( $item['id'] );
 
-		$actions     = [ 'date_created'   => '<p>' . sprintf( esc_html__( 'Since %s', 'customer-profiles' ), esc_html( date_i18n( get_option( 'date_format' ), strtotime( $item['date_created'] ) ) )
-		) . '</p>' ];
+		$actions     = array(
+			'view'   => '<p>' . $item['email'] . '</p>',
+		);
 
-		return '<a href="' . esc_url( $view_url ) . '">' . $name . '</a> <a href="'. $item_url .'">(' . $total_items . ')</a>' . $this->row_actions( $actions );
+		$pending  = edd_user_pending_verification( $customer->user_id ) ? ' <em>' . __( '(Pending Verification)', 'customer-details' ) . '</em> ' : '';
+
+		return '<a href="' . esc_url( $view_url ) . '">' . esc_attr( $name ) . '</a> <a class="total-items" href="'. esc_url( $item_url ) .'">(' . esc_attr( $total_items ) . ')</a>' . $pending . $this->row_actions( $actions );
 	}
 
 	/**
 	 * Retrieve the table columns
 	 *
-	 * @since 1.5
+	 * @since 1.0
 	 * @return array $columns Array of all the list table columns
 	 */
 	public function get_columns() {
 		$columns = array(
-			'name'          => __( 'Name', 'customer-profiles' ),
-			'products'      => __( 'Purchased Downloads', 'customer-profiles' ),
-			'amount_spent'  => __( 'Total Spend', 'customer-profiles' ),
-			'country_state' => __( 'Country / State', 'customer-profiles' ),
-			'city'          => __( 'City', 'customer-profiles' ),
-			'date_created'  => __( 'Date Created', 'customer-profiles' ),
+			'name'          => __( 'Name', 'customer-details' ),
+			'products'      => __( 'Purchased Downloads', 'customer-details' ),
+			'amount_spent'  => __( 'Total Spend', 'customer-details' ),
+			'country_state' => __( 'Country / State', 'customer-details' ),
+			'date_created'  => __( 'Customer Since', 'customer-details' ),
 		);
 
 		return apply_filters( 'edd_report_customer_columns', $columns );
@@ -224,7 +214,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 	/**
 	 * Outputs the reporting views
 	 *
-	 * @since 1.5
+	 * @since 1.0
 	 * @return void
 	 */
 	public function bulk_actions( $which = '' ) {
@@ -234,7 +224,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 	/**
 	 * Retrieve the current page number
 	 *
-	 * @since 1.5
+	 * @since 1.0
 	 * @return int Current page number
 	 */
 	public function get_paged() {
@@ -244,7 +234,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 	/**
 	 * Retrieves the search query string
 	 *
-	 * @since 1.7
+	 * @since 1.0
 	 * @return mixed string If search is present, false otherwise
 	 */
 	public function get_search() {
@@ -254,7 +244,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 	/**
 	 * Build all the reports data
 	 *
-	 * @since 1.5
+	 * @since 1.0
 	  * @global object $wpdb Used to query the database using the WordPress
 	 *   Database API
 	 * @return array $reports_data All the data for customer reports
@@ -287,6 +277,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 		}
 
 		$this->args = $args;
+
 		$customers  = EDD()->customers->get_customers( $args );
 
 		if ( $customers ) {
@@ -305,6 +296,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 					'date_created'  => $customer->date_created,
 				);
 			}
+
 		}
 
 		return $data;
@@ -313,11 +305,7 @@ class Customer_Profiles_Info extends WP_List_Table {
 	/**
 	 * Setup the final data for the table
 	 *
-	 * @since 1.5
-	 * @uses EDD_Customer_Reports_Table::get_columns()
-	 * @uses WP_List_Table::get_sortable_columns()
-	 * @uses EDD_Customer_Reports_Table::get_pagenum()
-	 * @uses EDD_Customer_Reports_Table::get_total_customers()
+	 * @since 1.0
 	 * @return void
 	 */
 	public function prepare_items() {

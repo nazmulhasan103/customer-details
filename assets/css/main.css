@@ -1,4 +1,18 @@
-h1.customer-profiles-title {
+/**
+ * @author  wpWax
+ * @since   1.0
+ * @version 1.0
+ */
+
+h1.customer-details-title {
     display: inline-block;
     padding: 0;
+}
+
+a.total-items {
+    font-weight: 500;
+    color: #1abc9c;
+}
+a.total-items:hover {
+    color: #2271b1;
 }

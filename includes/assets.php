@@ -1,11 +1,11 @@
 <?php
 /**
- * @author  Customer_Profiles
+ * @author  Customer_Details
  * @since   1.0
  * @version 1.0
  */
 
-namespace Customer_Profiles;
+namespace Customer_Details;
 
 /**
  * Assets handler class
@@ -22,17 +22,17 @@ class Assets {
 
     public function register_scripts () {
 
-        wp_register_style( 'customer-profiles-style', Customer_Profiles_ASSETS . '/css/main.css', false, filemtime( Customer_Profiles_PATH . '/assets/css/main.css' ) );
+        wp_register_style( 'customer-details-style', Customer_Details_ASSETS . '/css/main.css', false, filemtime( Customer_Details_PATH . '/assets/css/main.css' ) );
 
-        wp_register_script( 'customer-profiles-script', Customer_Profiles_ASSETS . '/js/main.js', false, filemtime( Customer_Profiles_PATH . '/assets/js/main.js' ), true );
+        wp_register_script( 'customer-details-script', Customer_Details_ASSETS . '/js/main.js', false, filemtime( Customer_Details_PATH . '/assets/js/main.js' ), true );
 
     }
 
     public function enqueue_scripts () {
 
-        wp_enqueue_style( 'customer-profiles-style' );
+        wp_enqueue_style( 'customer-details-style' );
 
-        wp_enqueue_script( 'customer-profiles-script' );
+        wp_enqueue_script( 'customer-details-script' );
 
     }
 }
