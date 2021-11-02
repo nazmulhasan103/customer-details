@@ -99,9 +99,9 @@ final class Customer_Details {
  * Initializes the main plugin.
  * @return \Customer_Details
  */
-function Customer_Details() {
+function EDD_Customer_Details() {
     return Customer_Details::init();
 }
 
 //Kick off the plugin.
-Customer_Details();
+EDD_Customer_Details();
