@@ -39,7 +39,7 @@ final class Customer_Details {
      * Load customer-details textdomain.
      */
     public function load_plugin_textdomain() {
-        load_plugin_textdomain( 'customer-details' );
+        load_plugin_textdomain( 'customer-details', false, dirname( plugin_basename( __FILE__ ) ) . '/languages');
     }
 
     /**

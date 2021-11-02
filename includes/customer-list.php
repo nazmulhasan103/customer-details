@@ -118,6 +118,7 @@ class Customer_Details_Info extends WP_List_Table {
 	 * @return string Column Name
 	 */
 	public function column_default( $item, $column_name ) {
+
 		$customer  = new EDD_Customer( $item['id'] );
 		$downloads = edd_get_users_purchased_products( $item['email'] );
 
