@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Easy Digital Downloads - Customer Details
+ * Plugin Name:       Customer Details - Easy Digital Downloads
  * Plugin URI:        https://github.com/themeaazz/customer-details
  * Description:       Customer details of easy-digital-downloads.
  * Version:           1.0
