@@ -81,17 +81,26 @@ class Customer_Details_Info extends WP_List_Table {
 	 */
 	public function search_box( $text, $input_id ) {
 		$input_id = $input_id . '-search-input';
-
-		if ( ! empty( $_REQUEST['orderby'] ) )
-			echo '<input type="hidden" name="orderby" value="' . esc_attr( $_REQUEST['orderby'] ) . '" />';
-		if ( ! empty( $_REQUEST['order'] ) )
-			echo '<input type="hidden" name="order" value="' . esc_attr( $_REQUEST['order'] ) . '" />';
 		?>
+
+		<?php if ( ! empty( $_REQUEST['orderby'] ) ) { ?>
+			<input type="hidden" name="orderby" value="<?php echo esc_attr( $_REQUEST['orderby'] ); ?>" />
+		<?php } ?>
+
+		<?php if ( ! empty( $_REQUEST['order'] ) ) { ?>
+			<input type="hidden" name="order" value="<?php echo esc_attr( $_REQUEST['order'] ); ?>" />
+		<?php } ?>
+
 		<p class="search-box">
-			<label class="screen-reader-text" for="<?php echo $input_id ?>"><?php echo $text; ?>:</label>
-			<input type="search" id="<?php echo $input_id ?>" name="s" value="<?php _admin_search_query(); ?>" />
+
+			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_html( $text ); ?>:</label>
+
+			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>" />
+
 			<?php submit_button( $text, 'button', false, false, array('ID' => 'search-submit') ); ?>
+
 		</p>
+
 		<?php
 	}
 
@@ -122,11 +131,11 @@ class Customer_Details_Info extends WP_List_Table {
 		$customer  = new EDD_Customer( $item['id'] );
 		$downloads = edd_get_users_purchased_products( $item['email'] );
 
-		$payment_ids = sprintf( '</br><span class="payment-id">%s %s%s</span>', __( 'ID: ', 'customer-details' ), '#' , str_replace( ',', ', #', $customer->payment_ids ) );
+		$payment_ids = sprintf( '</br><span class="payment-id">%s #%s</span>', __( 'ID: ', 'customer-details' ), str_replace( ',', ', #', esc_attr( $customer->payment_ids ) ) );
 
 		$products = [];
 		foreach ( $downloads as $download ) {
-			$products[] = '<a href="'. esc_url( $download->guid ) .'">' . esc_attr( $download->post_title ) . '</a>';
+			$products[] = '<a class="purchased-item" href="'. esc_url( $download->guid ) .'">' . esc_attr( $download->post_title ) . '</a>';
 		}
 
 		$address = get_user_meta( $item['id'], '_edd_user_address', true );
@@ -160,6 +169,9 @@ class Customer_Details_Info extends WP_List_Table {
 	}
 
 	public function column_name( $item ) {
+
+		$customer    = new EDD_Customer( $item['id'] );
+
 		$item_url = admin_url( '/edit.php?post_type=download&page=edd-payment-history&user=' . urlencode( $item['email'] ) );
 
 		$total_items = ( 1 == $item['num_purchases'] ) ? $item['num_purchases'] . __(' Item', 'customer-details') : $item['num_purchases'] . __(' Items', 'customer-details');
@@ -169,15 +181,11 @@ class Customer_Details_Info extends WP_List_Table {
 
 		$view_url    = admin_url( 'edit.php?post_type=download&page=edd-customers&view=overview&id=' . $item['id'] );
 
-		$customer    = new EDD_Customer( $item['id'] );
-
-		$actions     = array(
-			'view'   => '<p>' . $item['email'] . '</p>',
-		);
+		$actions     = [ 'view'   => '<p>' . sanitize_email( $item['email'] ) . '</p>' ];
 
 		$pending  = edd_user_pending_verification( $customer->user_id ) ? ' <em>' . __( '(Pending Verification)', 'customer-details' ) . '</em> ' : '';
 
-		return '<a href="' . esc_url( $view_url ) . '">' . esc_attr( $name ) . '</a> <a class="total-items" href="'. esc_url( $item_url ) .'">(' . esc_attr( $total_items ) . ')</a>' . $pending . $this->row_actions( $actions );
+		return '<a href="' . esc_url( $view_url ) . '">' . esc_attr( $name ) . '</a> <a class="total-items" href="'. esc_url( $item_url ) .'">' . esc_attr( '(' . $total_items . ')' ) . '</a>' . $pending . $this->row_actions( $actions );
 	}
 
 	/**

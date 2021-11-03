@@ -16,3 +16,7 @@ a.total-items {
 a.total-items:hover {
     color: #2271b1;
 }
+
+a.purchased-item:hover{
+    color: #1abc9c;
+}

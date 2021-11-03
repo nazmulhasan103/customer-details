@@ -5,7 +5,7 @@ Tags: sell, checkout, digital store
 Requires at least: 4.4
 Tested up to: 5.8.1
 Requires PHP: 5.3
-Stable Tag: 2.11.3.1
+Stable Tag: 1.0
 License: GNU Version 2 or Any Later Version
  
 == Description ==
