@@ -83,11 +83,11 @@ class Customer_Details_Info extends WP_List_Table {
 		$input_id = $input_id . '-search-input';
 		?>
 
-		<?php if ( ! empty( $_REQUEST['orderby'] ) ) { ?>
+		<?php if ( isset( $_REQUEST['orderby'] ) ) { ?>
 			<input type="hidden" name="orderby" value="<?php echo esc_attr( $_REQUEST['orderby'] ); ?>" />
 		<?php } ?>
 
-		<?php if ( ! empty( $_REQUEST['order'] ) ) { ?>
+		<?php if ( isset( $_REQUEST['order'] ) ) { ?>
 			<input type="hidden" name="order" value="<?php echo esc_attr( $_REQUEST['order'] ); ?>" />
 		<?php } ?>
 
@@ -174,10 +174,10 @@ class Customer_Details_Info extends WP_List_Table {
 
 		$item_url = admin_url( '/edit.php?post_type=download&page=edd-payment-history&user=' . urlencode( $item['email'] ) );
 
-		$total_items = ( 1 == $item['num_purchases'] ) ? $item['num_purchases'] . __(' Item', 'customer-details') : $item['num_purchases'] . __(' Items', 'customer-details');
+		$total_items = isset( $item['num_purchases'] ) && ( 1 == $item['num_purchases'] ) ? $item['num_purchases'] . __(' Item', 'customer-details') : $item['num_purchases'] . __(' Items', 'customer-details');
 
 		$name        = '#' . $item['id'] . ' ';
-		$name       .= ! empty( $item['name'] ) ? $item['name'] : '<em>' . __( 'Unnamed Customer', 'customer-details' ) . '</em>';
+		$name       .= isset( $item['name'] ) ? $item['name'] : '<em>' . __( 'Unnamed Customer', 'customer-details' ) . '</em>';
 
 		$view_url    = admin_url( 'edit.php?post_type=download&page=edd-customers&view=overview&id=' . $item['id'] );
 

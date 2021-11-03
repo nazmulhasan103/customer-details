@@ -1,7 +1,7 @@
 === Customer Details - Easy Digital Downloads ===
 Contributors: themeaazz
 Donate link: https://github.com/themeaazz
-Tags: sell, checkout, digital store
+Tags: edd, customer-details, customer-history, edd-customer-info
 Requires at least: 4.4
 Tested up to: 5.8.1
 Requires PHP: 5.3

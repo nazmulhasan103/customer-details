@@ -24,6 +24,9 @@ class Assets {
         add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
     }
 
+    /**
+     * Registered scripts
+     */
     public function register_scripts () {
 
         wp_register_style( 'customer-details-style', Customer_Details_ASSETS . '/css/main.css', false, filemtime( Customer_Details_PATH . '/assets/css/main.css' ) );
@@ -32,6 +35,9 @@ class Assets {
 
     }
 
+    /**
+     * Enqueue scripts
+     */
     public function enqueue_scripts () {
 
         wp_enqueue_style( 'customer-details-style' );
